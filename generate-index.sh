@@ -20,8 +20,8 @@ for file in $(ls -1 "$MEMORY_DIR"/*.md | sort -r); do
     # Only render non-empty content
     if [ -n "$content" ]; then
         echo "<div class='memory-entry'>" >> "$OUTPUT_FILE"
-        echo "  <button class='delete-btn' disabled>X</button>" >> "$OUTPUT_FILE"
-        echo "  <span>$timestamp_hms $timestamp_date | \"$content\"</span>" >> "$OUTPUT_FILE"
+        echo "  <span class='memory-timestamp'>$timestamp_hms $timestamp_date |</span>" >> "$OUTPUT_FILE"
+        echo "  <span class='memory-content'>\"$content\"</span>" >> "$OUTPUT_FILE"
         echo "</div>" >> "$OUTPUT_FILE"
     fi
 done
