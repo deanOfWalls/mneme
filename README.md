@@ -87,4 +87,3 @@ Mneme is built on a collection of open-source tools and libraries, chosen for th
 - Inline deletion of memories from the web interface
 - Optional local-only mode for offline-first privacy
 - Enhanced error handling and UI feedback during recording/transcription
-
