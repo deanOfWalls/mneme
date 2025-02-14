@@ -10,6 +10,7 @@ KEYWORD_PATH = "/home/dean/Dev/mneme/Sophia_en_linux_v3_0_0.ppn"
 MEMORIES_DIR = "/home/dean/Dev/mneme/memories"
 WHISPER_CPP_DIR = "/home/dean/Dev/mneme/whisper.cpp/build/bin"
 MODEL_PATH = "/home/dean/Dev/mneme/whisper.cpp/models/ggml-base.bin"
+GENERATE_INDEX_SCRIPT = "/home/dean/Dev/mneme/generate-index.sh"
 
 
 def record_memory():
@@ -80,10 +81,18 @@ def process_memory(wav_path):
 
 
 def push_memory(md_path):
+    # Generate index.html locally
+    subprocess.run(["bash", GENERATE_INDEX_SCRIPT], check=True)
+
+    # Stage the .md and the index.html
     subprocess.run(["git", "-C", MEMORIES_DIR, "add", md_path], check=True)
-    subprocess.run(["git", "-C", MEMORIES_DIR, "commit", "-m", f"Add memory {os.path.basename(md_path)}"], check=True)
+    subprocess.run(["git", "-C", MEMORIES_DIR, "add", "../index.html"], check=True)
+
+    # Commit and push
+    subprocess.run(["git", "-C", MEMORIES_DIR, "commit", "-m", f"Add memory {os.path.basename(md_path)} and update index"], check=True)
     subprocess.run(["git", "-C", MEMORIES_DIR, "push", "origin", "master"], check=True)
-    print(f"[SUCCESS] Pushed {md_path} to GitHub.")
+
+    print(f"[SUCCESS] Pushed {md_path} and index.html to GitHub.")
 
 
 def main():
