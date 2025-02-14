@@ -11,6 +11,7 @@ MEMORIES_DIR = "/home/dean/Dev/mneme/memories"
 WHISPER_CPP_DIR = "/home/dean/Dev/mneme/whisper.cpp/build/bin"
 MODEL_PATH = "/home/dean/Dev/mneme/whisper.cpp/models/ggml-base.bin"
 
+
 def record_memory():
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     wav_path = os.path.join(MEMORIES_DIR, f"{timestamp}.wav")
@@ -29,6 +30,7 @@ def record_memory():
     except KeyboardInterrupt:
         record_process.terminate()
         print("[INFO] Recording interrupted.")
+
 
 def process_memory(wav_path):
     base_filename = os.path.splitext(os.path.basename(wav_path))[0]
@@ -58,25 +60,31 @@ def process_memory(wav_path):
 
     if os.path.exists(transcript_path):
         with open(transcript_path, "r") as f:
-            transcript = f.read()
+            transcript = f.read().strip()
 
         with open(md_path, "w") as f:
             f.write(f"# Mneme Memory – {base_filename}\n\n")
             f.write(transcript)
 
-        os.remove(wav_path)
-        os.remove(resampled_wav_path)
-        os.remove(transcript_path)
+        # Check if transcription is empty (after trimming whitespace)
+        if not transcript:
+            print(f"[INFO] Empty memory detected, deleting: {md_path}")
+            os.remove(md_path)
+        else:
+            os.remove(wav_path)
+            os.remove(resampled_wav_path)
+            os.remove(transcript_path)
 
-        print(f"[SUCCESS] Transcribed and saved memory to: {md_path}")
+            print(f"[SUCCESS] Transcribed and saved memory to: {md_path}")
+            push_memory(md_path)
 
-        push_memory(md_path)
 
 def push_memory(md_path):
     subprocess.run(["git", "-C", MEMORIES_DIR, "add", md_path], check=True)
     subprocess.run(["git", "-C", MEMORIES_DIR, "commit", "-m", f"Add memory {os.path.basename(md_path)}"], check=True)
     subprocess.run(["git", "-C", MEMORIES_DIR, "push", "origin", "master"], check=True)
     print(f"[SUCCESS] Pushed {md_path} to GitHub.")
+
 
 def main():
     porcupine = pvporcupine.create(
@@ -112,6 +120,7 @@ def main():
         audio_stream.close()
         pa.terminate()
         porcupine.delete()
+
 
 if __name__ == "__main__":
     main()
