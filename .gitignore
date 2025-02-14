@@ -1,0 +1,8 @@
+*.wav
+*.txt
+*.bin
+venv/
+whisper.cpp/
+mneme_capture.py
+transcribe_memories.py
+push_memories.py
