@@ -1,0 +1,30 @@
+name: Generate Index
+
+on:
+  push:
+    branches:
+      - main
+
+permissions: # Required for pushing back to the repo!
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository with write permissions
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate index.html
+        run: bash generate-index.sh
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --quiet && git diff --staged --quiet || git commit -m "Update index.html"
+          git push

@@ -4,5 +4,4 @@
 venv/
 whisper.cpp/
 mneme_capture.py
-transcribe_memories.py
-push_memories.py
+process_memories.py
