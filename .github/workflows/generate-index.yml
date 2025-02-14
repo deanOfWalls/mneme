@@ -3,7 +3,7 @@ name: Generate Index
 on:
   push:
     branches:
-      - main
+      - master
 
 permissions: # Required for pushing back to the repo!
   contents: write
