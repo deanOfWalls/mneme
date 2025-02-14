@@ -1,48 +1,66 @@
+/* Terminal-inspired modern memory log style */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #0b1e33;
-    color: #e0e0e0;
-    margin: 20px;
+    font-family: 'Fira Code', monospace;
+    background-color: #0d1117;
+    color: #c9d1d9;
+    margin: 40px auto;
+    max-width: 800px;
+    line-height: 1.6;
 }
 
 h1 {
-    color: #ffffff;
-    text-align: center;
+    font-size: 22px;
+    color: #58a6ff;
+    border-bottom: 2px solid #30363d;
+    padding-bottom: 8px;
+    margin-bottom: 24px;
 }
 
 .memory-entry {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
-    padding: 10px;
-    background-color: #14273f;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    transition: background-color 0.2s;
+    padding: 12px;
+    margin-bottom: 8px;
+    background-color: #161b22;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
 .memory-entry:hover {
-    background-color: #1c3654;
+    background-color: #1c2128;
+    transform: translateY(-1px);
 }
 
 .delete-btn {
-    margin-right: 12px;
-    background-color: #ff4d4d;
+    background-color: #ff5555;
     color: white;
     border: none;
     padding: 6px 10px;
-    cursor: not-allowed;
     border-radius: 4px;
-    font-size: 14px;
+    cursor: not-allowed;
+    margin-right: 10px;
+    font-size: 12px;
+    font-family: 'Fira Code', monospace;
     opacity: 0.8;
-    transition: opacity 0.2s;
+    transition: opacity 0.2s ease, background-color 0.2s ease;
 }
 
 .delete-btn:hover {
     opacity: 1;
 }
 
-span {
+.memory-timestamp {
+    color: #8b949e;
+    margin-right: 10px;
     font-size: 14px;
-    white-space: pre-wrap; /* Handles multiline memories */
+}
+
+.memory-content {
+    font-size: 14px;
+    color: #c9d1d9;
+    flex-grow: 1;
+    white-space: pre-wrap;
 }
