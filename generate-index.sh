@@ -35,7 +35,7 @@ cat << 'EOF' >> "$OUTPUT_FILE"
     if (!confirm(`Delete memory ${filename}?`)) return;
 
     try {
-      const response = await fetch('http://192.168.1.166:5000/delete-memory', {
+      const response = await fetch('api/delete-memory', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ filename }),
