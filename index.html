@@ -4,13 +4,40 @@
 <body>
 <h1>Mneme Memories</h1>
 <div id='memories-list'>
-<div class='memory-entry'>
-  <span class='memory-timestamp'>22:33:39 2025/02/14 |</span>
-  <span class='memory-content'>"API integration for an online deletion of memories from the web interface."</span>
+<div class='memory-entry' id='entry-2025-02-15_22-06-37.md'>
+  <button class='delete-btn' onclick='deleteMemory("2025-02-15_22-06-37.md")'>[ - ]</button>
+  <span>22:06:37.md 2025/02/15 | "Let's test the new endpoint."</span>
 </div>
-<div class='memory-entry'>
-  <span class='memory-timestamp'>10:01:51 2025/02/14 |</span>
-  <span class='memory-content'>"This is my first memory."</span>
+<div class='memory-entry' id='entry-2025-02-14_22-33-39.md'>
+  <button class='delete-btn' onclick='deleteMemory("2025-02-14_22-33-39.md")'>[ - ]</button>
+  <span>22:33:39.md 2025/02/14 | "API integration for an online deletion of memories from the web interface."</span>
+</div>
+<div class='memory-entry' id='entry-2025-02-14_10-01-51.md'>
+  <button class='delete-btn' onclick='deleteMemory("2025-02-14_10-01-51.md")'>[ - ]</button>
+  <span>10:01:51.md 2025/02/14 | "This is my first memory."</span>
 </div>
 </div>
+<script>
+  async function deleteMemory(filename) {
+    if (!confirm(`Delete memory ${filename}?`)) return;
+
+    try {
+      const response = await fetch('http://192.168.1.166:5000/delete-memory', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename }),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        document.getElementById(`entry-${filename}`).remove();
+        alert(`Deleted: ${filename}`);
+      } else {
+        alert(`Failed to delete: ${result.error}`);
+      }
+    } catch (error) {
+      alert(`Request failed: ${error.message}`);
+    }
+  }
+</script>
 </body></html>
