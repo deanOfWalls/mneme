@@ -4,13 +4,15 @@ import struct
 import subprocess
 from datetime import datetime
 import os
+import requests
 
-ACCESS_KEY = "WiX+NEu10KBTfIuE4T4WS1H6qIANSd8tXsiqVbmlbpO7KzpM1mTM2w=="
+with open('access_key', 'r') as f:
+	ACCESS_KEY = f.read().strip()
 KEYWORD_PATH = "/home/dean/Dev/mneme/Sophia_en_linux_v3_0_0.ppn"
 MEMORIES_DIR = "/home/dean/Dev/mneme/memories"
 WHISPER_CPP_DIR = "/home/dean/Dev/mneme/whisper.cpp/build/bin"
 MODEL_PATH = "/home/dean/Dev/mneme/whisper.cpp/models/ggml-base.bin"
-GENERATE_INDEX_SCRIPT = "/home/dean/Dev/mneme/generate-index.sh"
+SERVER_UPLOAD_URL = "https://mneme.deanwalls.com/api/upload-memory"
 
 
 def record_memory():
@@ -21,7 +23,7 @@ def record_memory():
 
     record_process = subprocess.Popen([
         "sox", "-t", "alsa", "default", "-r", "16000", "-c", "1", "-b", "16", wav_path,
-        "silence", "1", "0.1", "1%", "1", "1.0", "1%"
+        "silence", "1", "0.1", "1%", "1", "1.0", "2%"
     ])
 
     try:
@@ -63,36 +65,33 @@ def process_memory(wav_path):
         with open(transcript_path, "r") as f:
             transcript = f.read().strip()
 
-        with open(md_path, "w") as f:
-            f.write(f"# Mneme Memory – {base_filename}\n\n")
-            f.write(transcript)
-
-        # Check if transcription is empty (after trimming whitespace)
         if not transcript:
-            print(f"[INFO] Empty memory detected, deleting: {md_path}")
-            os.remove(md_path)
+            print(f"[INFO] Empty memory detected, deleting: {wav_path}")
         else:
-            os.remove(wav_path)
-            os.remove(resampled_wav_path)
-            os.remove(transcript_path)
+            upload_memory(f"{base_filename}.md", transcript)
 
-            print(f"[SUCCESS] Transcribed and saved memory to: {md_path}")
-            push_memory(md_path)
+        # Clean up local temp files
+        os.remove(wav_path)
+        os.remove(resampled_wav_path)
+        os.remove(transcript_path)
 
 
-def push_memory(md_path):
-    # Generate index.html locally
-    subprocess.run(["bash", GENERATE_INDEX_SCRIPT], check=True)
+def upload_memory(filename, transcript):
+    data = {
+        "filename": filename,
+        "content": transcript
+    }
 
-    # Stage the .md and the index.html
-    subprocess.run(["git", "-C", MEMORIES_DIR, "add", md_path], check=True)
-    subprocess.run(["git", "-C", MEMORIES_DIR, "add", "../index.html"], check=True)
+    try:
+        response = requests.post(SERVER_UPLOAD_URL, json=data)
 
-    # Commit and push
-    subprocess.run(["git", "-C", MEMORIES_DIR, "commit", "-m", f"Add memory {os.path.basename(md_path)} and update index"], check=True)
-    subprocess.run(["git", "-C", MEMORIES_DIR, "push", "origin", "master"], check=True)
+        if response.status_code == 200:
+            print(f"[SUCCESS] Uploaded {filename} to server.")
+        else:
+            print(f"[ERROR] Failed to upload {filename}. Status: {response.status_code}, Response: {response.text}")
 
-    print(f"[SUCCESS] Pushed {md_path} and index.html to GitHub.")
+    except Exception as e:
+        print(f"[ERROR] Failed to upload {filename}. Exception: {str(e)}")
 
 
 def main():

@@ -1,7 +1,1 @@
-*.wav
-*.txt
-*.bin
-venv/
-whisper.cpp/
-mneme_capture.py
-process_memories.py
+access_key
